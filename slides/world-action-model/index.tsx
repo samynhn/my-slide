@@ -66,41 +66,12 @@ const fill: CSSProperties = {
   boxSizing: 'border-box',
 };
 
-const badgeKeyframes = `
-@keyframes wamBadgeIn {
-  0% { transform: scale(1); }
-  55% { transform: scale(1.1); }
-  80% { transform: scale(1.05); }
-  100% { transform: scale(1.07); }
-}
-@keyframes wamBadgeOut {
-  0% { transform: scale(1.07); }
-  60% { transform: scale(0.98); }
-  100% { transform: scale(1); }
-}
-@keyframes wamBadgeTap {
-  0% { transform: scale(1.07); }
-  40% { transform: scale(0.95); }
-  75% { transform: scale(1.09); }
-  100% { transform: scale(1.07); }
-}
-@keyframes wamBadgeRipple { 0% { opacity: 0.45; transform: scale(1); } 100% { opacity: 0; transform: scale(1.4); } }
-`;
 /** Author badge pinned to the top-left corner of every page; links to GitHub.
  *  The avatar always loads the live GitHub picture and falls back to the bundled copy offline. */
 const AuthorBadge = () => {
-  const [state, setState] = useState<'idle' | 'in' | 'out'>('idle');
-  const [tap, setTap] = useState(0);
+  const [hover, setHover] = useState(false);
+  const [pressed, setPressed] = useState(false);
   const [avatar, setAvatar] = useState('https://github.com/samynhn.png?size=120');
-
-  const animation =
-    tap > 0
-      ? 'wamBadgeTap 260ms ease-out forwards'
-      : state === 'in'
-        ? 'wamBadgeIn 280ms ease-out forwards'
-        : state === 'out'
-          ? 'wamBadgeOut 220ms ease-out forwards'
-          : 'none';
 
   return (
     <a
@@ -108,12 +79,13 @@ const AuthorBadge = () => {
       target="_blank"
       rel="noopener noreferrer"
       data-osd-interactive=""
-      onMouseEnter={() => setState('in')}
-      onMouseLeave={() => setState('out')}
-      onMouseDown={() => setTap((t) => t + 1)}
-      onAnimationEnd={(e) => {
-        if (e.animationName === 'wamBadgeTap') setTap(0);
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => {
+        setHover(false);
+        setPressed(false);
       }}
+      onMouseDown={() => setPressed(true)}
+      onMouseUp={() => setPressed(false)}
       onClick={(e) => e.stopPropagation()}
       style={{
         position: 'absolute',
@@ -126,40 +98,25 @@ const AuthorBadge = () => {
         padding: '5px 14px 5px 5px',
         borderRadius: 999,
         background: card,
-        border: `1px solid ${state === 'in' ? 'var(--osd-accent)' : line}`,
-        boxShadow: state === 'in' ? '0 10px 24px rgba(43, 89, 195, 0.22)' : 'none',
+        border: `1px solid ${hover ? 'var(--osd-accent)' : line}`,
+        boxShadow: hover ? '0 8px 20px rgba(43, 89, 195, 0.18)' : 'none',
         color: 'var(--osd-text)',
         textDecoration: 'none',
         fontFamily: mono,
         fontSize: 18,
         fontWeight: 700,
         transformOrigin: 'left center',
-        animation,
-        transition: 'border-color 200ms ease, box-shadow 250ms ease',
+        transform: pressed ? 'scale(0.96)' : hover ? 'scale(1.06)' : 'scale(1)',
+        transition: 'transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease',
         cursor: 'pointer',
       }}
     >
-      <style>{badgeKeyframes}</style>
-      <span style={{ position: 'relative', width: 30, height: 30, display: 'block' }}>
-        <img
-          key={avatar}
-          src={avatar}
-          onError={() => setAvatar(avatarImg)}
-          style={{ width: 30, height: 30, borderRadius: 15, display: 'block' }}
-        />
-        {tap > 0 ? (
-          <span
-            key={tap}
-            style={{
-              position: 'absolute',
-              inset: 0,
-              borderRadius: 15,
-              border: '3px solid var(--osd-accent)',
-              animation: 'wamBadgeRipple 320ms ease-out forwards',
-            }}
-          />
-        ) : null}
-      </span>
+      <img
+        key={avatar}
+        src={avatar}
+        onError={() => setAvatar(avatarImg)}
+        style={{ width: 30, height: 30, borderRadius: 15, display: 'block' }}
+      />
       samynhn
     </a>
   );
