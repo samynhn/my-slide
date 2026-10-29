@@ -123,7 +123,7 @@ const AuthorBadge = () => {
 };
 
 const REPORT_DATE = '2026-10-29';
-const REPORT_KIND = 'Weekly Paper Reading';
+const REPORT_KIND = 'World Action Model';
 
 /** Report meta pinned to the top-right corner of every page. */
 const ReportTag = () => (
