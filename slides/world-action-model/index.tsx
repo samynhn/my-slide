@@ -66,36 +66,106 @@ const fill: CSSProperties = {
   boxSizing: 'border-box',
 };
 
-/** Author badge pinned to the top-left corner of every page; links to GitHub. */
-const AuthorBadge = () => (
-  <a
-    href="https://github.com/samynhn"
-    target="_blank"
-    rel="noopener noreferrer"
-    data-osd-interactive=""
-    style={{
-      position: 'absolute',
-      left: 36,
-      top: 24,
-      zIndex: 5,
-      display: 'flex',
-      alignItems: 'center',
-      gap: 10,
-      padding: '5px 14px 5px 5px',
-      borderRadius: 999,
-      background: card,
-      border: `1px solid ${line}`,
-      color: 'var(--osd-text)',
-      textDecoration: 'none',
-      fontFamily: mono,
-      fontSize: 18,
-      fontWeight: 700,
-    }}
-  >
-    <img src={avatarImg} style={{ width: 30, height: 30, borderRadius: 15, display: 'block' }} />
-    samynhn
-  </a>
-);
+const badgeKeyframes = `
+@keyframes wamBadgeIn {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.22); }
+  65% { transform: scale(1.08); }
+  82% { transform: scale(1.15); }
+  100% { transform: scale(1.12); }
+}
+@keyframes wamBadgeOut {
+  0% { transform: scale(1.12); }
+  55% { transform: scale(0.96); }
+  100% { transform: scale(1); }
+}
+@keyframes wamBadgeTap {
+  0% { transform: scale(1.12); }
+  30% { transform: scale(0.88); }
+  65% { transform: scale(1.2); }
+  100% { transform: scale(1.12); }
+}
+@keyframes wamBadgeRipple { 0% { opacity: 0.55; transform: scale(1); } 100% { opacity: 0; transform: scale(1.6); } }
+`;
+
+/** Author badge pinned to the top-left corner of every page; links to GitHub.
+ *  The avatar always loads the live GitHub picture and falls back to the bundled copy offline. */
+const AuthorBadge = () => {
+  const [state, setState] = useState<'idle' | 'in' | 'out'>('idle');
+  const [tap, setTap] = useState(0);
+  const [avatar, setAvatar] = useState('https://github.com/samynhn.png?size=120');
+
+  const animation =
+    tap > 0
+      ? 'wamBadgeTap 420ms cubic-bezier(.3,.7,.3,1) forwards'
+      : state === 'in'
+        ? 'wamBadgeIn 560ms cubic-bezier(.34,1.56,.64,1) forwards'
+        : state === 'out'
+          ? 'wamBadgeOut 360ms ease-out forwards'
+          : 'none';
+
+  return (
+    <a
+      href="https://github.com/samynhn"
+      target="_blank"
+      rel="noopener noreferrer"
+      data-osd-interactive=""
+      onMouseEnter={() => setState('in')}
+      onMouseLeave={() => setState('out')}
+      onMouseDown={() => setTap((t) => t + 1)}
+      onAnimationEnd={(e) => {
+        if (e.animationName === 'wamBadgeTap') setTap(0);
+      }}
+      onClick={(e) => e.stopPropagation()}
+      style={{
+        position: 'absolute',
+        left: 36,
+        top: 24,
+        zIndex: 5,
+        display: 'flex',
+        alignItems: 'center',
+        gap: 10,
+        padding: '5px 14px 5px 5px',
+        borderRadius: 999,
+        background: card,
+        border: `1px solid ${state === 'in' ? 'var(--osd-accent)' : line}`,
+        boxShadow: state === 'in' ? '0 10px 24px rgba(43, 89, 195, 0.22)' : 'none',
+        color: 'var(--osd-text)',
+        textDecoration: 'none',
+        fontFamily: mono,
+        fontSize: 18,
+        fontWeight: 700,
+        transformOrigin: 'left center',
+        animation,
+        transition: 'border-color 200ms ease, box-shadow 250ms ease',
+        cursor: 'pointer',
+      }}
+    >
+      <style>{badgeKeyframes}</style>
+      <span style={{ position: 'relative', width: 30, height: 30, display: 'block' }}>
+        <img
+          key={avatar}
+          src={avatar}
+          onError={() => setAvatar(avatarImg)}
+          style={{ width: 30, height: 30, borderRadius: 15, display: 'block' }}
+        />
+        {tap > 0 ? (
+          <span
+            key={tap}
+            style={{
+              position: 'absolute',
+              inset: 0,
+              borderRadius: 15,
+              border: '3px solid var(--osd-accent)',
+              animation: 'wamBadgeRipple 480ms ease-out forwards',
+            }}
+          />
+        ) : null}
+      </span>
+      samynhn
+    </a>
+  );
+};
 
 const Footer = () => {
   const { current, total } = useSlidePageNumber();
