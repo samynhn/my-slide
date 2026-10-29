@@ -122,6 +122,38 @@ const AuthorBadge = () => {
   );
 };
 
+const REPORT_DATE = '2026-10-29';
+const REPORT_KIND = 'Weekly Paper Reading';
+
+/** Report meta pinned to the top-right corner of every page. */
+const ReportTag = () => (
+  <div
+    style={{
+      position: 'absolute',
+      right: 36,
+      top: 24,
+      zIndex: 5,
+      display: 'flex',
+      alignItems: 'center',
+      gap: 10,
+      height: 42,
+      padding: '0 16px',
+      boxSizing: 'border-box',
+      borderRadius: 999,
+      background: card,
+      border: `1px solid ${line}`,
+      fontFamily: mono,
+      fontSize: 18,
+      color: muted,
+      whiteSpace: 'nowrap',
+    }}
+  >
+    <span style={{ color: 'var(--osd-accent)', fontWeight: 700 }}>{REPORT_KIND}</span>
+    <span style={{ width: 1, height: 16, background: line }} />
+    <span style={{ fontWeight: 700, color: 'var(--osd-text)' }}>{REPORT_DATE}</span>
+  </div>
+);
+
 const Footer = () => {
   const { current, total } = useSlidePageNumber();
   return (
@@ -179,6 +211,7 @@ const Shell = ({
     </h2>
     <div style={{ marginTop: 40 }}>{children}</div>
     <AuthorBadge />
+    <ReportTag />
     <Footer />
   </div>
 );
@@ -386,9 +419,10 @@ const Cover: Page = () => (
       從 Fast-WAM / OpenWAM 出發，經 Faster-WAM、SANTS、Simple-WAM，到 ImageWAM 與 ProWAM
     </p>
     <div style={{ position: 'absolute', left: 160, bottom: 80, fontFamily: mono, fontSize: 24, color: muted }}>
-      2026-10-29 · 9 papers · 2026.03 – 2026.10
+      {REPORT_DATE} · 9 papers · 2026.03 – 2026.10
     </div>
     <AuthorBadge />
+    <ReportTag />
   </div>
 );
 
@@ -1320,6 +1354,7 @@ const PaperIntro = ({
     </div>
     {children}
     <AuthorBadge />
+    <ReportTag />
     <Footer />
   </div>
 );
