@@ -1,0 +1,12 @@
+{
+  "folders": [
+    {
+      "id": "world-action-model",
+      "name": "World Action Model",
+      "icon": { "type": "emoji", "value": "🤖" }
+    }
+  ],
+  "assignments": {
+    "world-action-model": "world-action-model"
+  }
+}
