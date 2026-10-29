@@ -69,25 +69,23 @@ const fill: CSSProperties = {
 const badgeKeyframes = `
 @keyframes wamBadgeIn {
   0% { transform: scale(1); }
-  40% { transform: scale(1.22); }
-  65% { transform: scale(1.08); }
-  82% { transform: scale(1.15); }
-  100% { transform: scale(1.12); }
+  55% { transform: scale(1.1); }
+  80% { transform: scale(1.05); }
+  100% { transform: scale(1.07); }
 }
 @keyframes wamBadgeOut {
-  0% { transform: scale(1.12); }
-  55% { transform: scale(0.96); }
+  0% { transform: scale(1.07); }
+  60% { transform: scale(0.98); }
   100% { transform: scale(1); }
 }
 @keyframes wamBadgeTap {
-  0% { transform: scale(1.12); }
-  30% { transform: scale(0.88); }
-  65% { transform: scale(1.2); }
-  100% { transform: scale(1.12); }
+  0% { transform: scale(1.07); }
+  40% { transform: scale(0.95); }
+  75% { transform: scale(1.09); }
+  100% { transform: scale(1.07); }
 }
-@keyframes wamBadgeRipple { 0% { opacity: 0.55; transform: scale(1); } 100% { opacity: 0; transform: scale(1.6); } }
+@keyframes wamBadgeRipple { 0% { opacity: 0.45; transform: scale(1); } 100% { opacity: 0; transform: scale(1.4); } }
 `;
-
 /** Author badge pinned to the top-left corner of every page; links to GitHub.
  *  The avatar always loads the live GitHub picture and falls back to the bundled copy offline. */
 const AuthorBadge = () => {
@@ -97,11 +95,11 @@ const AuthorBadge = () => {
 
   const animation =
     tap > 0
-      ? 'wamBadgeTap 420ms cubic-bezier(.3,.7,.3,1) forwards'
+      ? 'wamBadgeTap 260ms ease-out forwards'
       : state === 'in'
-        ? 'wamBadgeIn 560ms cubic-bezier(.34,1.56,.64,1) forwards'
+        ? 'wamBadgeIn 280ms ease-out forwards'
         : state === 'out'
-          ? 'wamBadgeOut 360ms ease-out forwards'
+          ? 'wamBadgeOut 220ms ease-out forwards'
           : 'none';
 
   return (
@@ -157,7 +155,7 @@ const AuthorBadge = () => {
               inset: 0,
               borderRadius: 15,
               border: '3px solid var(--osd-accent)',
-              animation: 'wamBadgeRipple 480ms ease-out forwards',
+              animation: 'wamBadgeRipple 320ms ease-out forwards',
             }}
           />
         ) : null}
